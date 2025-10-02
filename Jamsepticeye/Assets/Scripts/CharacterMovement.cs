@@ -68,6 +68,7 @@ public class CharacterMovement : MonoBehaviour
             ? crouchMovementSpeed
             : (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed);
 
+
         // Horizontal movement
         Vector3 move = transform.right * x + transform.forward * z;
 
