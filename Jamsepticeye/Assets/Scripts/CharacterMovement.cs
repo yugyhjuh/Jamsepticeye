@@ -13,6 +13,13 @@ public class CharacterMovement : MonoBehaviour
     public KeyCode sprintKey = KeyCode.LeftShift;
     private float currentSpeed;
 
+    [Header("Stamina Settings")]
+    public float maxStamina = 5f;          // Max stamina in seconds
+    public float stamina;                  // Current stamina
+    public float staminaDrainRate = 1f;    // How fast it drains while sprinting
+    public float staminaRegenRate = 0.5f;  // How fast it regenerates when not sprinting
+    private bool isSprinting = false;
+
     private float rotX; // Camera rotation on X axis
     private CharacterController controller;
     private Camera playerCamera;
@@ -30,7 +37,9 @@ public class CharacterMovement : MonoBehaviour
     public float crouchMovementSpeed = 1.5f; //speed while croucghed
     private bool isCrouching = false;
 
-    
+
+
+
 
     [Header("Interaction Settings")]
     public float interactDistance = 3f; // How far player can interact
@@ -71,6 +80,25 @@ public class CharacterMovement : MonoBehaviour
 
         // Horizontal movement
         Vector3 move = transform.right * x + transform.forward * z;
+
+        // Check if player can sprint
+        if (!isCrouching && Input.GetKey(KeyCode.LeftShift) && stamina > 0)
+        {
+            isSprinting = true;
+            currentSpeed = sprintSpeed;
+            stamina -= staminaDrainRate * Time.deltaTime; // drain stamina
+        }
+        else
+        {
+            isSprinting = false;
+            currentSpeed = walkSpeed;
+
+            // Regenerate stamina when not sprinting
+            if (stamina < maxStamina)
+                stamina += staminaRegenRate * Time.deltaTime;
+        }
+
+        stamina = Mathf.Clamp(stamina, 0, maxStamina); // prevent going below 0 or above max
 
         // Gravity
         if (controller.isGrounded && verticalVelocity < 0)

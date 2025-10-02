@@ -567,6 +567,16 @@ MonoBehaviour:
   maxLookX: 80
   minLookX: -100
   sprintKey: 306
+  maxStamina: 5
+  stamina: 0
+  staminaDrainRate: 1
+  staminaRegenRate: 0.5
+  jumpHeight: 1.5
+  gravity: -9.81
+  crouchHeight: 1
+  standHeight: 2
+  crouchSpeed: 2
+  crouchMovementSpeed: 1.5
   interactDistance: 100
   interactMask:
     serializedVersion: 2
