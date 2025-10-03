@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -7,31 +6,36 @@ public class DialogueScript : MonoBehaviour
 {
     public TextMeshProUGUI textComponent;
     public string[] lines;
-    public float textSpeed;
-    public float autoNextDelay; //After the end of current line, time to wait before next line
+    public float textSpeed = 0.03f;
+    public float autoNextDelay = 1f; // time to wait before auto-advance when a line is fully shown
 
     private int index;
+    private Coroutine typingCR;
+    private Coroutine autoAdvanceCR;
 
-    // Start is called before the first frame update
     void Start()
     {
         textComponent.text = string.Empty;
         StartDialogue();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (textComponent.text == lines[index])
+            // If we're still typing, reveal instantly and start the idle timer
+            if (typingCR != null)
             {
-                NextLine();
+                StopCoroutine(typingCR);
+                typingCR = null;
+                textComponent.text = lines[index];
+                StartIdleAutoAdvance(); // start auto-advance after reveal
             }
             else
             {
-                StopAllCoroutines();
-                textComponent.text = lines[index];
+                // Line is already fully shown: advance immediately on click
+                CancelIdleAutoAdvance();
+                NextLine();
             }
         }
     }
@@ -39,38 +43,69 @@ public class DialogueScript : MonoBehaviour
     void StartDialogue()
     {
         index = 0;
-        StartCoroutine(TypeLine());
+        StartTypingCurrentLine();
+    }
+
+    void StartTypingCurrentLine()
+    {
+        CancelIdleAutoAdvance(); // ensure no stray timers
+        textComponent.text = string.Empty;
+        typingCR = StartCoroutine(TypeLine());
     }
 
     IEnumerator TypeLine()
     {
-        //Type each character 1 by 1
-        foreach (char c in lines[index].ToCharArray())
+        foreach (char c in lines[index])
         {
             textComponent.text += c;
             yield return new WaitForSeconds(textSpeed);
         }
 
+        // Finished typing naturally
+        typingCR = null;
+        StartIdleAutoAdvance();
+    }
+
+    void StartIdleAutoAdvance()
+    {
+        // Restart the idle timer from scratch
+        CancelIdleAutoAdvance();
+        autoAdvanceCR = StartCoroutine(AutoAdvanceAfterDelay());
+    }
+
+    void CancelIdleAutoAdvance()
+    {
+        if (autoAdvanceCR != null)
+        {
+            StopCoroutine(autoAdvanceCR);
+            autoAdvanceCR = null;
+        }
+    }
+
+    IEnumerator AutoAdvanceAfterDelay()
+    {
         yield return new WaitForSeconds(autoNextDelay);
 
-        // Only go next if we’re still on the same line
-        // (Prevents conflict if player clicks to skip ahead)
-        if (textComponent.text == lines[index])
+        // Only auto-advance if the line is still fully shown and we haven't started typing again
+        if (typingCR == null && textComponent.text == lines[index])
         {
             NextLine();
         }
+        autoAdvanceCR = null;
     }
 
     void NextLine()
     {
+        CancelIdleAutoAdvance();
+
         if (index < lines.Length - 1)
         {
             index++;
-            textComponent.text = string.Empty;
-            StartCoroutine(TypeLine());
+            StartTypingCurrentLine();
         }
         else
         {
+            // End of dialogue
             gameObject.SetActive(false);
         }
     }
