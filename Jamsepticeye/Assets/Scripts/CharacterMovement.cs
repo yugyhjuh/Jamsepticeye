@@ -15,10 +15,12 @@ public class CharacterMovement : MonoBehaviour
 
     [Header("Stamina Settings")]
     public float maxStamina = 5f;          // Max stamina in seconds
-    public float stamina;                  // Current stamina
+    [SerializeField] private float stamina;                  // Current stamina
     public float staminaDrainRate = 1f;    // How fast it drains while sprinting
     public float staminaRegenRate = 0.5f;  // How fast it regenerates when not sprinting
-    private bool isSprinting = false;
+    //private bool isSprinting = false;
+    private bool canSprint = true;
+
 
     private float rotX; // Camera rotation on X axis
     private CharacterController controller;
@@ -51,6 +53,7 @@ public class CharacterMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         playerCamera = Camera.main;
         originalCameraY = playerCamera.transform.localPosition.y;
+        stamina = maxStamina;
 
         // Lock cursor for immersion
         Cursor.lockState = CursorLockMode.Locked;
@@ -64,45 +67,60 @@ public class CharacterMovement : MonoBehaviour
         CameraLook();
         Interact();
         HandleCrouch();
+
+        //Debug.Log("Current Stamina: " + stamina.ToString("F2"));
     }
 
     void Move()
     {
+        // Get input
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        // Sprint
-        
-        float currentSpeed = isCrouching
-            ? crouchMovementSpeed
-            : (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed);
-
-
-        // Horizontal movement
+        // Calculate movement direction
         Vector3 move = transform.right * x + transform.forward * z;
 
-        // Check if player can sprint
-        if (!isCrouching && Input.GetKey(KeyCode.LeftShift) && stamina > 0)
+        // Determine movement speed
+        if (isCrouching)
         {
-            isSprinting = true;
-            currentSpeed = sprintSpeed;
-            stamina -= staminaDrainRate * Time.deltaTime; // drain stamina
+            currentSpeed = crouchMovementSpeed;
         }
         else
         {
-            isSprinting = false;
-            currentSpeed = walkSpeed;
+            if (Input.GetKey(KeyCode.LeftShift) && canSprint)
+            {
+                currentSpeed = sprintSpeed;
+                stamina -= staminaDrainRate * Time.deltaTime;
 
-            // Regenerate stamina when not sprinting
-            if (stamina < maxStamina)
-                stamina += staminaRegenRate * Time.deltaTime;
+                // Disable sprint if stamina drops below 0
+                if (stamina <= 0)
+                {
+                    stamina = 0;
+                    canSprint = false;
+                }
+            }
+            else
+            {
+                currentSpeed = walkSpeed;
+
+                // Regenerate stamina
+                if (stamina < maxStamina)
+                {
+                    stamina += staminaRegenRate * Time.deltaTime;
+
+                    // Once fully recharged, allow sprint again
+                    if (stamina >= maxStamina)
+                        canSprint = true;
+                }
+            }
         }
 
-        stamina = Mathf.Clamp(stamina, 0, maxStamina); // prevent going below 0 or above max
+        // Clamp stamina to stay within limits
+        stamina = Mathf.Clamp(stamina, 0, maxStamina);
 
         // Gravity
         if (controller.isGrounded && verticalVelocity < 0)
-            verticalVelocity = -2f; // small negative to keep grounded
+            verticalVelocity = -2f; // keep grounded
 
         // Jump
         if (Input.GetKeyDown(KeyCode.Space) && controller.isGrounded)
@@ -111,8 +129,10 @@ public class CharacterMovement : MonoBehaviour
         verticalVelocity += gravity * Time.deltaTime;
         move.y = verticalVelocity;
 
+        // Apply movement
         controller.Move(move * currentSpeed * Time.deltaTime);
     }
+
 
     void HandleCrouch()
     {
@@ -120,21 +140,24 @@ public class CharacterMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftControl))
             isCrouching = !isCrouching;
 
-        // Smoothly lerp height
+        // Target capsule height
         float targetHeight = isCrouching ? crouchHeight : standHeight;
+
+        // Smoothly interpolate capsule height
         controller.height = Mathf.Lerp(controller.height, targetHeight, crouchSpeed * Time.deltaTime);
 
-        // Adjust center so capsule stays grounded
+        // Keep capsule grounded
         Vector3 center = controller.center;
         center.y = controller.height / 2f;
         controller.center = center;
 
-        // Adjust camera to match crouch
+        // Smoothly move camera with capsule
         Vector3 camPos = playerCamera.transform.localPosition;
-        camPos.y = controller.height - 0.2f; // offset inside capsule
-        playerCamera.transform.localPosition = Vector3.Lerp(playerCamera.transform.localPosition, camPos, crouchSpeed * Time.deltaTime);
+        float targetCamY = isCrouching ? crouchHeight - 0.2f : standHeight - 0.2f;
+        camPos.y = Mathf.Lerp(camPos.y, targetCamY, crouchSpeed * Time.deltaTime);
+        playerCamera.transform.localPosition = camPos;
 
-/*        if (isCrouching)
+        /*        if (isCrouching)
         {
             currentSpeed = crouchMovementSpeed;
         }
@@ -143,6 +166,8 @@ public class CharacterMovement : MonoBehaviour
             currentSpeed = walkSpeed;
         }*/
     }
+
+
 
     void CameraLook()
     {
