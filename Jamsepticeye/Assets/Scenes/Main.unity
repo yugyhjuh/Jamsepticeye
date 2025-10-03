@@ -889,6 +889,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 9207051713579737616, guid: 9f1e88994c7fdd445afe69b19a5a1007, type: 3}
+      propertyPath: _TextureWarpingFactor
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9207051713579737617, guid: 9f1e88994c7fdd445afe69b19a5a1007, type: 3}
       propertyPath: m_RootOrder
       value: 6
