@@ -176,7 +176,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 670ff926064d4e64ba3060ecde18bdae, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -346,9 +346,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 457839332}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 378.00165, y: 0, z: 599.2495}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 378.00165, y: -1, z: 599.2495}
+  m_LocalScale: {x: 0.58, y: 0.58, z: 0.58}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 815256403}
   m_Father: {fileID: 0}
@@ -387,7 +387,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2178352261720299797, guid: 4ee3cfee0b839d04daae5518f1f84d95, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -123.9
+      value: -135.5
       objectReference: {fileID: 0}
     - target: {fileID: 2178352261720299797, guid: 4ee3cfee0b839d04daae5518f1f84d95, type: 3}
       propertyPath: m_LocalPosition.z
@@ -420,6 +420,10 @@ PrefabInstance:
     - target: {fileID: 2178352261720299797, guid: 4ee3cfee0b839d04daae5518f1f84d95, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2178352261720299797, guid: 4ee3cfee0b839d04daae5518f1f84d95, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ee3cfee0b839d04daae5518f1f84d95, type: 3}
@@ -610,8 +614,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815256399}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 51.5, z: 0}
-  m_LocalScale: {x: 50, y: 50, z: 50}
+  m_LocalPosition: {x: 0, y: 43.4, z: 0}
+  m_LocalScale: {x: 40.3, y: 40.3, z: 40.3}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 963194228}
@@ -630,22 +634,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1cec35506f939e43b8ddf4f9d28f155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 100
-  sprintSpeed: 500
+  walkSpeed: 60
+  sprintSpeed: 120
   mouseSensitivity: 1.5
   maxLookX: 80
   minLookX: -100
   sprintKey: 306
-  maxStamina: 5
+  maxStamina: 2
   stamina: 0
-  staminaDrainRate: 1
+  staminaDrainRate: 0.75
   staminaRegenRate: 0.5
-  jumpHeight: 1.5
+  jumpHeight: 0.32
   gravity: -9.81
   crouchHeight: 1
-  standHeight: 2
-  crouchSpeed: 2
-  crouchMovementSpeed: 1.5
+  standHeight: 1.5
+  crouchSpeed: 9
+  crouchMovementSpeed: 25
   interactDistance: 100
   interactMask:
     serializedVersion: 2
@@ -746,7 +750,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.37, z: 0}
+  m_LocalPosition: {x: 0, y: 0.21, z: 0}
   m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_ConstrainProportionsScale: 0
   m_Children: []
