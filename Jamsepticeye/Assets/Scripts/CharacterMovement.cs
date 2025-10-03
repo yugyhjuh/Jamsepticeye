@@ -40,12 +40,12 @@ public class CharacterMovement : MonoBehaviour
     private bool isCrouching = false;
 
 
-
-
-
-    [Header("Interaction Settings")]
+/*    [Header("Interaction Settings")]
     public float interactDistance = 3f; // How far player can interact
-    public LayerMask interactMask;
+    public LayerMask interactMask;*/
+
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -65,7 +65,7 @@ public class CharacterMovement : MonoBehaviour
     {
         Move();
         CameraLook();
-        Interact();
+        //Interact();
         HandleCrouch();
 
         //Debug.Log("Current Stamina: " + stamina.ToString("F2"));
@@ -182,7 +182,7 @@ public class CharacterMovement : MonoBehaviour
         transform.Rotate(Vector3.up * y);
     }
 
-    void Interact()
+/*    void Interact()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -198,5 +198,6 @@ public class CharacterMovement : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
+
 }
