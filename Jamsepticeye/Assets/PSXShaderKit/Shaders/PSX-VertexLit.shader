@@ -13,13 +13,13 @@
         _FlatShading("Flat Shading", Range(0,1)) = 0
         _CustomDepthOffset("Custom Depth Offset", Float) = 0
     }
-        SubShader
+    SubShader
     {
-        Tags {"RenderType" = "Opaque" }
+        Tags { "RenderType" = "Opaque" }
         ZWrite On
         LOD 100
-		
-		//Vertex lighting requires two passes to be defined. One used with lightmaps and one without.
+
+        // ===== Vertex Lighting with Lightmaps =====
         Pass
         {
             Tags { "LightMode" = "VertexLM" }
@@ -35,19 +35,19 @@
             #include "UnityCG.cginc"
             #include "PSX-Utils.cginc"
 
-			samplerCUBE _Cubemap;
+            samplerCUBE _Cubemap;
             sampler2D _ReflectionMap;
-			float4 _CubemapColor;
-			
-            #define PSX_VERTEX_LIT
-			#define PSX_CUBEMAP _Cubemap
-			#define PSX_CUBEMAP_COLOR _CubemapColor
-			
-            #include "PSX-ShaderSrc.cginc"
+            float4 _CubemapColor;
 
-        ENDCG
+            #define PSX_VERTEX_LIT
+            #define PSX_CUBEMAP _Cubemap
+            #define PSX_CUBEMAP_COLOR _CubemapColor
+
+            #include "PSX-ShaderSrc.cginc"
+            ENDCG
         }
 
+        // ===== Vertex Lighting without Lightmaps =====
         Pass
         {
             Tags { "LightMode" = "Vertex" }
@@ -63,17 +63,57 @@
             #include "UnityCG.cginc"
             #include "PSX-Utils.cginc"
 
-			samplerCUBE _Cubemap;
+            samplerCUBE _Cubemap;
             sampler2D _ReflectionMap;
-			float4 _CubemapColor;
-			
+            float4 _CubemapColor;
+
             #define PSX_VERTEX_LIT
-			#define PSX_CUBEMAP _Cubemap
-			#define PSX_CUBEMAP_COLOR _CubemapColor
-			
+            #define PSX_CUBEMAP _Cubemap
+            #define PSX_CUBEMAP_COLOR _CubemapColor
+
             #include "PSX-ShaderSrc.cginc"
-        ENDCG
+            ENDCG
+        }
+
+        // ===== ShadowCaster Pass =====
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+
+            ZWrite On
+            ZTest LEqual
+
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_shadowcaster
+            #include "UnityCG.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+            };
+
+            struct v2f
+            {
+                V2F_SHADOW_CASTER;
+            };
+
+            v2f vert(appdata v)
+            {
+                v2f o;
+                TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+                return o;
+            }
+
+            float4 frag(v2f i) : SV_Target
+            {
+                SHADOW_CASTER_FRAGMENT(i)
+            }
+            ENDCG
         }
     }
-        Fallback "PSX/Lite/Vertex Lit"
+    Fallback "PSX/Lite/Vertex Lit"
 }
