@@ -11,7 +11,7 @@ public class CharacterMovement : MonoBehaviour
     public float maxLookX = 80f; // Look up limit
     public float minLookX = -80f; // Look down limit
     public KeyCode sprintKey = KeyCode.LeftShift;
-    private float currentSpeed;
+    [HideInInspector] public float currentSpeed;
 
     [Header("Stamina Settings")]
     public float maxStamina = 5f;          // Max stamina in seconds
