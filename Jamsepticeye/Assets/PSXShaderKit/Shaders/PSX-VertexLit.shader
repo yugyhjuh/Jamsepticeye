@@ -12,7 +12,11 @@
         _ObjectDithering("Per-Object Dithering Enable", Range(0,1)) = 1
         _FlatShading("Flat Shading", Range(0,1)) = 0
         _CustomDepthOffset("Custom Depth Offset", Float) = 0
+
+        // 👇 Add this new property
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull("Render Face", Float) = 2
     }
+
     SubShader
     {
         Tags { "RenderType" = "Opaque" }
@@ -23,6 +27,10 @@
         Pass
         {
             Tags { "LightMode" = "VertexLM" }
+
+            // 👇 Use the user-selected culling mode
+            Cull [_Cull]
+
             CGPROGRAM
             #pragma vertex vert
             #pragma geometry geom
@@ -51,6 +59,10 @@
         Pass
         {
             Tags { "LightMode" = "Vertex" }
+
+            // 👇 Apply same culling control here too
+            Cull [_Cull]
+
             CGPROGRAM
             #pragma vertex vert
             #pragma geometry geom
@@ -84,6 +96,9 @@
             ZWrite On
             ZTest LEqual
 
+            // 👇 Also respect user face setting
+            Cull [_Cull]
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -115,5 +130,6 @@
             ENDCG
         }
     }
+
     Fallback "PSX/Lite/Vertex Lit"
 }
