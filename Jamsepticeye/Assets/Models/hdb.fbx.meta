@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a860aa7e23f585943a162162e26f8145
+guid: 15e7571cfe5fbdc49a8e1d25da76919c
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: hdb_Baked
-    second: {fileID: 2100000, guid: 57a02d59af449c74f9ec6a2b19b1e1a8, type: 2}
+      name: hdb_Baked.001
+    second: {fileID: 2100000, guid: 719ab3b7ac0d6ca468129df2e6d24052, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
