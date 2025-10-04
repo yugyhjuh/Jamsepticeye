@@ -178,7 +178,7 @@ MonoBehaviour:
   textComponent: {fileID: 1507803691}
   lines:
   - Fuck, this place really does look like a shithole.
-  - From living in a condo to living like this... Wah, talk about hitting rock bottom.
+  - From living in a condo to living like this... Wah, talk about rock bottom.
   - '*Screams*'
   textSpeed: 0.1
   autoNextDelay: 1
