@@ -1556,6 +1556,7 @@ GameObject:
   - component: {fileID: 1733561533}
   - component: {fileID: 1733561535}
   - component: {fileID: 1733561534}
+  - component: {fileID: 1733561536}
   m_Layer: 5
   m_Name: SettingsPage
   m_TagString: Untagged
@@ -1623,6 +1624,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1733561532}
   m_CullTransparentMesh: 1
+--- !u!114 &1733561536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733561532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce7dc855e7c95d6489fe47629d3a9ec3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioMixer: {fileID: 0}
+  volumeSlider: {fileID: 0}
+  fullscreenToggle: {fileID: 0}
 --- !u!1 &1780191778
 GameObject:
   m_ObjectHideFlags: 0
