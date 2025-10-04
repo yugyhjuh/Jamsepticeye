@@ -12,17 +12,23 @@ public class CameraShake : MonoBehaviour
     [SerializeField] private Transform _camera = null; 
     [SerializeField] private Transform _cameraHolder = null;
 
+
     private Quaternion previousRotation;
     private Vector3 _startPos;
     public CharacterMovement characterMovement;
 
     public float blendSpeed;
+
+    public float swayMultiplier;
+
     private float rotation;
-    public float shake;
+    private float shake;
     [HideInInspector] public float stepDuration;
 
-    public float amount;
-    public float strength;
+    [Header("Roll")]
+    public float frequency;
+    public float amplitude;
+
     private void Awake()
     {
         _startPos = _camera.localPosition;
@@ -74,7 +80,7 @@ public class CameraShake : MonoBehaviour
         Quaternion deltaRotation = _cameraHolder.parent.rotation * Quaternion.Inverse(previousRotation);
         previousRotation = _cameraHolder.parent.rotation;
 
-        rotation = Mathf.Lerp(rotation, deltaRotation.y * 125, blendSpeed * Time.deltaTime);
+        rotation = Mathf.Lerp(rotation, deltaRotation.y * swayMultiplier, blendSpeed * Time.deltaTime);
 
         _cameraHolder.localEulerAngles = new Vector3(_cameraHolder.localEulerAngles.x, _cameraHolder.localEulerAngles.y, _cameraHolder.localEulerAngles.z + rotation);
     }
@@ -83,7 +89,7 @@ public class CameraShake : MonoBehaviour
     {
         if (stepDuration > 0)
         {
-            shake += Mathf.Sin(Time.time * _frequency) * _Amplitude * 2;
+            shake = Mathf.Sin(Time.time * Mathf.PI * Random.Range(frequency / 2, frequency * 2)) * amplitude;
             stepDuration -= Time.deltaTime;
         }
         else
