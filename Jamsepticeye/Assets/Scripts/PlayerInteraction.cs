@@ -1,47 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
     [Header("Interaction Settings")]
-    public float interactDistance = 3f; // How far player can interact
+    public float interactDistance = 3f;
     public LayerMask interactMask;
-    public float pickUpDistance = 50f;
-    //public LayerMask grabbableMask;
 
     [SerializeField] private Transform playerCameraTransform;
-    [SerializeField] private Transform objectGrabPointTransform;
+    [SerializeField] private Transform grabPointTransform;
 
-    private Interactable interactable;
-    void Update()
+    private Interactable heldObject;
+
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (interactable == null)
+            if (heldObject == null)
             {
-                //for not carrying an obj currently
-                if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out RaycastHit raycastHit, pickUpDistance, interactMask))
-                {
-
-                    Debug.Log(raycastHit.transform);
-                    if (raycastHit.transform.TryGetComponent(out interactable))
-                    {
-                        interactable.Grab(objectGrabPointTransform);
-                        Debug.Log(interactable + "from player script");
-                    }
-                }
+                TryGrab();
             }
             else
             {
-                //Drop item
-                interactable.Drop();
-                interactable = null;
+                DropObject();
             }
-            
-            
-            
+        }
+        if (Time.frameCount % 60 == 0) // print once per second
+        {
+            Debug.Log($"Gravity: {Physics.gravity}, TimeScale: {Time.timeScale}");
+        }
+        /*        Debug.Log("Time Scale: " + Time.timeScale);
+                Debug.Log("Physics gravity = " + Physics.gravity);
+                Debug.Log("Time scale = " + Time.timeScale);*/
+    }
+
+    private void TryGrab()
+    {
+        if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out RaycastHit hit, interactDistance, interactMask))
+        {
+            if (hit.transform.TryGetComponent(out Interactable interactable))
+            {
+                heldObject = interactable;
+                heldObject.Grab(grabPointTransform);
+                Debug.Log("Grabbed: " + hit.transform.name);
+            }
+        }
+        else
+        {
+            Debug.Log("No object hit within range.");
         }
     }
 
+    private void DropObject()
+    {
+        if (heldObject != null)
+        {
+            heldObject.Drop();
+            Debug.Log("Dropped object");
+            heldObject = null;
+        }
+    }
 }
