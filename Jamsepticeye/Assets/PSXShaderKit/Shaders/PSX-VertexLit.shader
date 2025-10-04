@@ -13,7 +13,7 @@
         _FlatShading("Flat Shading", Range(0,1)) = 0
         _CustomDepthOffset("Custom Depth Offset", Float) = 0
 
-        // 👇 Add this new property
+        //Render Face
         [Enum(UnityEngine.Rendering.CullMode)] _Cull("Render Face", Float) = 2
     }
 
@@ -28,7 +28,7 @@
         {
             Tags { "LightMode" = "VertexLM" }
 
-            // 👇 Use the user-selected culling mode
+            //Render Face
             Cull [_Cull]
 
             CGPROGRAM
@@ -60,7 +60,7 @@
         {
             Tags { "LightMode" = "Vertex" }
 
-            // 👇 Apply same culling control here too
+            //Render Face
             Cull [_Cull]
 
             CGPROGRAM
@@ -96,7 +96,7 @@
             ZWrite On
             ZTest LEqual
 
-            // 👇 Also respect user face setting
+            //Render Face
             Cull [_Cull]
 
             CGPROGRAM
