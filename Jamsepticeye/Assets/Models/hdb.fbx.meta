@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: hdb_Baked.001
-    second: {fileID: 2100000, guid: 719ab3b7ac0d6ca468129df2e6d24052, type: 2}
+      name: hdb_Baked.002
+    second: {fileID: 2100000, guid: f268c1fd115323a468ac427102f3f162, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
