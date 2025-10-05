@@ -123,8 +123,8 @@ public class CharacterMovement : MonoBehaviour
             verticalVelocity = -2f; // keep grounded
 
         // Jump
-        if (Input.GetKeyDown(KeyCode.Space) && controller.isGrounded)
-            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+/*        if (Input.GetKeyDown(KeyCode.Space) && controller.isGrounded)
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);*/
 
         verticalVelocity += gravity * Time.deltaTime;
         move.y = verticalVelocity;
