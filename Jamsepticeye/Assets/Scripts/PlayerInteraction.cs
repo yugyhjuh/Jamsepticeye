@@ -13,10 +13,10 @@ public class PlayerInteraction : MonoBehaviour
 
     public DialogueTest dialog;
 
-    private void Start()
+/*    private void Start()
     {
         dialog.playSequence();
-    }
+    }*/
 
     private void Update()
     {

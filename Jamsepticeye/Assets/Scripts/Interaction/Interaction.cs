@@ -40,6 +40,11 @@ public class Interaction : MonoBehaviour
         {
             StartCoroutine(OpenDoor(door));
         }
+
+        if (hit.collider.TryGetComponent<Bed>(out Bed bed))
+        {
+            bed.Interact(); // triggers scene change
+        }
     }
 
     IEnumerator Teleport(Lift lift)
