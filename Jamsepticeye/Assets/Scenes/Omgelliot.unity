@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueScript: {fileID: 818406734}
-  dialogueSequence: {fileID: 11400000, guid: b72372810474daa498731606b4d1ed6c, type: 2}
+  dialogueSequence: {fileID: 11400000, guid: 7c62357d61e016b4798dfbb9c844a423, type: 2}
 --- !u!114 &134127130
 MonoBehaviour:
   m_ObjectHideFlags: 0
