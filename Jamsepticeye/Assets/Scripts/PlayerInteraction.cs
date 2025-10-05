@@ -24,13 +24,9 @@ public class PlayerInteraction : MonoBehaviour
                 DropObject();
             }
         }
-        if (Time.frameCount % 60 == 0) // print once per second
-        {
-            Debug.Log($"Gravity: {Physics.gravity}, TimeScale: {Time.timeScale}");
-        }
-        /*        Debug.Log("Time Scale: " + Time.timeScale);
-                Debug.Log("Physics gravity = " + Physics.gravity);
-                Debug.Log("Time scale = " + Time.timeScale);*/
+
+        // Update grab point to avoid walls every frame
+        UpdateGrabPoint();
     }
 
     private void TryGrab()
@@ -55,8 +51,36 @@ public class PlayerInteraction : MonoBehaviour
         if (heldObject != null)
         {
             heldObject.Drop();
-            Debug.Log("Dropped object");
             heldObject = null;
+            Debug.Log("Dropped object");
+        }
+    }
+
+    private void UpdateGrabPoint()
+    {
+        float maxDistance = interactDistance;
+
+        Vector3 origin = playerCameraTransform.position;
+        Vector3 forward = playerCameraTransform.forward;
+
+        // Cast from camera to max distance
+        if (Physics.Raycast(origin, forward, out RaycastHit hit, maxDistance))
+        {
+            // Stop grab point before obstacle
+            grabPointTransform.position = hit.point - forward * 0.2f; // small buffer
+        }
+        else
+        {
+            // Default position in front of player
+            grabPointTransform.position = origin + forward * maxDistance;
+        }
+
+        // Ensure grab point doesn't go inside the player/camera
+        float minDistance = 50f; // minimum distance from camera
+        float distance = Vector3.Distance(origin, grabPointTransform.position);
+        if (distance < minDistance)
+        {
+            grabPointTransform.position = origin + forward * minDistance;
         }
     }
 }
