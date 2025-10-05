@@ -1,12 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.XR;
 
 public class PlayerSFX : MonoBehaviour
 {
-    public CharacterMovement characterMovement;
-    public CameraShake camerashake;
+    private CharacterMovement characterMovement;
+    private CameraShake cameraShake;
+
+    public List<AudioSource> sources;
 
     private AudioSource footstepAudio;
     private AudioSource playerAudio;
@@ -15,17 +21,35 @@ public class PlayerSFX : MonoBehaviour
     private float crouchStepMultiplier = 1.5f;
     private float sprintStepMultplier = 0.625f;
 
-    public List<Footstep> footstepSounds;
+    [Header("General Sounds")]
+    public List<Sound> ambientSounds;
+    public List<Sound> immersionSounds;
+
+    [Header("Footstep & Foley Sounds")]
+    public List<SFX> footstepSounds;
+    public List<SFX> foleySounds;
 
     private float footstepTimer = 0;
     private float GetCurrentOffset => characterMovement.currentSpeed == characterMovement.crouchSpeed ? baseStepSpeed * crouchStepMultiplier : characterMovement.currentSpeed == characterMovement.sprintSpeed ? baseStepSpeed * sprintStepMultplier : baseStepSpeed;
 
     public float stepDuration;
 
+    [Header("Reverb")]
+    public AudioReverbZone reverbZone;
+    public float blendSpeed;
+
+    private float distance;
+    public LayerMask includeLayers;
     // Start is called before the first frame update
     void Start()
     {
-        SetFootstep();
+        characterMovement = GetComponent<CharacterMovement>();
+        cameraShake = GetComponent<CameraShake>();
+
+        SetUpAudio();
+
+        AddSources(ambientSounds);
+        AddSources(immersionSounds);
     }
 
     void FixedUpdate()
@@ -41,14 +65,14 @@ public class PlayerSFX : MonoBehaviour
 
         Debug.Log(characterMovement.currentSpeed);
         Footsteps(move * characterMovement.currentSpeed * Time.deltaTime);
+
+        Reverb();
     }
 
-    void SetFootstep()
+    void SetUpAudio()
     {
         footstepAudio = this.AddComponent<AudioSource>();
-
-        footstepAudio.volume = 1f;
-        footstepAudio.spatialBlend = 0.5f;
+        playerAudio = this.AddComponent<AudioSource>();
     }
 
     private void Footsteps(Vector2 input)
@@ -64,28 +88,28 @@ public class PlayerSFX : MonoBehaviour
                 switch (hit.collider.tag)
                 {
                     case "Footsteps/Grass":
-                        PlayFootstep("Grass");
+                        Footstep("Grass");
                         break;
                     case "Footsteps/Sand":
-                        PlayFootstep("Sand");
+                        Footstep("Sand");
                         break;
                     case "Footsteps/Wood":
-                        PlayFootstep("Wood");
+                        Footstep("Wood");
                         break;
                     default:
-                        PlayFootstep("Default");
+                        Footstep("Default");
                         break;
                 }
 
-                camerashake.stepDuration = stepDuration;
+                cameraShake.stepDuration = stepDuration;
             }
             footstepTimer = GetCurrentOffset;
         }
     }
 
-    void PlayFootstep(string footstepName)
+    void Footstep(string footstepName)
     {
-        foreach (Footstep footstep in footstepSounds)
+        foreach (SFX footstep in footstepSounds)
         {
             if (footstep.name == footstepName && footstep.sounds.Length > 0)
             {
@@ -93,11 +117,96 @@ public class PlayerSFX : MonoBehaviour
             }
         }
     }
+    public void Play(string name, List<Sound> sounds)
+    {
+        // Ternary operators are used to check if the name matches the sound in the Sound[] array
+        Sound sound = Array.Find(sounds.ToArray(), sound => sound.name == name);
+
+        // If the sound does not exist, return
+        if (sound == null) return;
+
+        // If the sound does exist, the sound would be played
+        sound.source.Play();
+    }
+
+    void PlayOneShot(string name, List<SFX> sounds)
+    {
+        foreach (SFX sound in sounds)
+        {
+            if (sound.name == name && sound.sounds.Length > 0)
+            {
+                playerAudio.PlayOneShot(sound.sounds[0]);
+            }
+        }
+    }
+
+    void AddSources(List<Sound> sounds)
+    {
+        foreach (Sound sound in sounds)
+        {
+            // An AudioSource component is added to the GameObject that this script is attached
+            sound.source = this.AddComponent<AudioSource>();
+
+            // The clip, volume, pitch, and loop variables within the AudioSource are then set
+            sound.source.clip = sound.clip;
+
+            sound.source.volume = sound.volume;
+            sound.source.pitch = sound.pitch;
+            sound.source.spatialBlend = sound.spatialBlend;
+
+            sound.source.loop = sound.loop;
+        }
+
+        PlayAudio(sounds);
+    }
+
+    void PlayAudio(List<Sound> sounds)
+    {
+        foreach (Sound sound in sounds)
+        {
+            Play(sound.name, sounds);
+        }
+    }
+
+    void Reverb()
+    {
+        RaycastHit hit;
+
+        if(Physics.Raycast(reverbZone.transform.position, Vector3.up, out hit))
+        {
+            distance = Vector3.Distance(reverbZone.transform.position, hit.point);
+        }
+        else
+        {
+            distance = 0;
+        }
+
+        reverbZone.minDistance = Mathf.Lerp(reverbZone.minDistance, distance, blendSpeed * Time.deltaTime);
+        reverbZone.maxDistance = Mathf.Lerp(reverbZone.maxDistance, distance * 2, blendSpeed * Time.deltaTime);
+    }
 }
 
 [System.Serializable]
-public class Footstep
+public class SFX
 {
     public string name;
+
+    public SoundSettings settings;
+
     public AudioClip[] sounds;
+}
+
+[System.Serializable]
+public class SoundSettings
+{
+    public AudioMixerGroup output;
+
+    [Range(0f, 1f)]
+    public float volume;
+
+    [Range(-3f, 3f)]
+    public float pitch;
+
+    [Range(0f, 1f)]
+    public float spatialBlend;
 }
