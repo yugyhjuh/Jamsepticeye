@@ -1,37 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement; 
 
 public class MainMenu : MonoBehaviour
 {
-    public GameObject SettingsObject;
-
-    // Load a scene by its name
-    public void PlayGame()
+    public GameObject SettingsObj;
+    public void PlayScene()
     {
-        SceneManager.LoadScene("sceneName");
+        //SceneManager.LoadScene("");
+        Debug.Log("Starting Scene 1... ");
     }
 
-    public void Settings()
+    public void SettingsPage()
     {
-        if (SettingsObject != null)
+        if (SettingsObj != null)
         {
-            if (!SettingsObject.activeSelf)
+            if (!SettingsObj.activeSelf)
             {
-                SettingsObject.SetActive(true);
+                SettingsObj.SetActive(true);
             }
             else
             {
-                SettingsObject.SetActive(false);
+                SettingsObj.SetActive(false);
             }
         }
     }
-
-    // Quit the application (works in build, not in editor)
     public void QuitGame()
     {
         Application.Quit();
-        Debug.Log("Game quit!");
+        Debug.Log("Game quit! (Won't show in Editor)");
     }
 }
+
