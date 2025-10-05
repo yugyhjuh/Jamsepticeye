@@ -10,32 +10,34 @@ public class Interactable : MonoBehaviour
     private Transform grabPoint;
     private bool isGrabbed;
 
-    [SerializeField] private float followSpeed = 15f; // how quickly it follows the grab point
+    [SerializeField] private float followSpeed = 15f; // how quickly it follows
     [SerializeField] private float dropForce = 8f;     // downward impulse when dropped
 
-private void Awake()
-{
-    rb = GetComponent<Rigidbody>();
-    rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; // Prevent clipping
-}
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+    }
 
     public void Grab(Transform grabPoint)
     {
         this.grabPoint = grabPoint;
         isGrabbed = true;
+
         rb.useGravity = false;
-        rb.drag = 10f;              // high drag while held (less jitter)
-        rb.velocity = Vector3.zero; // reset momentum
+        rb.drag = 10f;
+        rb.velocity = Vector3.zero;
     }
 
     public void Drop()
     {
         isGrabbed = false;
         grabPoint = null;
-        rb.useGravity = true;
-        rb.drag = 0f;   // restore normal physics
 
-        // Add a downward impulse to make it fall faster
+        rb.useGravity = true;
+        rb.drag = 0f;
+
+        // Apply small downward impulse
         rb.AddForce(Vector3.down * dropForce, ForceMode.Impulse);
     }
 
@@ -43,12 +45,24 @@ private void Awake()
     {
         if (isGrabbed && grabPoint != null)
         {
-            Vector3 direction = grabPoint.position - rb.position;
-            float distance = direction.magnitude;
+            Vector3 moveDir = grabPoint.position - rb.position;
+            float distance = moveDir.magnitude;
 
-            // Scale force by distance to prevent overshooting
-            float followForce = 50f; // tweak this
-            rb.AddForce(direction.normalized * followForce * distance, ForceMode.Force);
+            if (distance > 0.01f) // prevent jitter
+            {
+                // Cast in move direction to check for collisions
+                if (Physics.Raycast(rb.position, moveDir.normalized, out RaycastHit hit, distance))
+                {
+                    // Move only up to obstacle, with small buffer
+                    rb.MovePosition(hit.point - moveDir.normalized * 0.01f);
+                }
+                else
+                {
+                    // Free move
+                    rb.MovePosition(rb.position + moveDir);
+                }
+            }
         }
     }
 }
+
