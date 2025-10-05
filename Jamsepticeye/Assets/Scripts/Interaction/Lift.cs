@@ -6,4 +6,6 @@ public class Lift : MonoBehaviour
 {
     public Vector3 position;
     public Vector3 rotation;
+
+
 }

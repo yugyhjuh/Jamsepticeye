@@ -11,6 +11,13 @@ public class PlayerInteraction : MonoBehaviour
 
     private Interactable heldObject;
 
+    public DialogueTest dialog;
+
+    private void Start()
+    {
+        dialog.playSequence();
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
