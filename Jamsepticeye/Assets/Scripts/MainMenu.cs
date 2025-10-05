@@ -3,11 +3,12 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public GameObject SettingsObj;
+    public GameObject SettingsObj;     
+
     public void PlayScene()
     {
-        //SceneManager.LoadScene("");
-        Debug.Log("Starting Scene 1... ");
+        SceneManager.LoadScene("Omgelliot");
+
     }
 
     public void SettingsPage()

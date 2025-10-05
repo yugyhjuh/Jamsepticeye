@@ -9,14 +9,16 @@ public class DialogueScript : MonoBehaviour
 
     [Header("Text")]
     public string[] lines;
+    [Tooltip("Seconds per character")]
     public float textSpeed = 0.03f;
     public float autoNextDelay = 0.6f;     // minimum idle delay after text finishes typing
+    public bool useUnscaledTime = true;    // type during paused time if true
 
     [Header("Voice")]
-    public AudioSource voiceSource;        // assign an AudioSource (no clip needed in Inspector)
-    public AudioClip[] voiceClips;         // same length/order as 'lines'
+    public AudioSource voiceSource;         // assign an AudioSource (no clip needed in Inspector)
+    public AudioClip[] voiceClips;          // same length/order as 'lines'
     public bool waitForVoiceToFinish = true; // auto-advance waits for voice end
-    public float postVoicePause = 0.25f;   // small pause after voice ends
+    public float postVoicePause = 0.25f;    // small pause after voice ends
 
     private int index;
     private Coroutine typingCR;
@@ -24,29 +26,29 @@ public class DialogueScript : MonoBehaviour
 
     void Start()
     {
-        textComponent.text = string.Empty;
+        // start hidden/empty; you'll typically call PlaySequence(...) to drive this
+        if (textComponent) textComponent.text = string.Empty;
 
-        if (voiceClips != null && voiceClips.Length > 0 && voiceClips.Length != lines.Length)
-            Debug.LogWarning("voiceClips length does not match lines length. Missing clips will be skipped.");
-
-        StartDialogue();
+        // sanity warning (only if both arrays exist but differ)
+        if (voiceClips != null && voiceClips.Length > 0 && lines != null && lines.Length > 0 && voiceClips.Length != lines.Length)
+        {
+            Debug.LogWarning("[DialogueScript] voiceClips length does not match lines length.");
+        }
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            // If we're still typing, reveal instantly but keep voice playing
             if (typingCR != null)
             {
-                StopCoroutine(typingCR);
-                typingCR = null;
-                textComponent.text = lines[index];
+                // Instantly reveal without stomping text
+                InstantReveal();
                 StartIdleAutoAdvance();
             }
             else
             {
-                // Already fully shown: skip to next line immediately
+                // Fully shown -> stop voice and advance immediately
                 CancelIdleAutoAdvance();
                 StopVoice();
                 NextLine();
@@ -54,33 +56,92 @@ public class DialogueScript : MonoBehaviour
         }
     }
 
-    void StartDialogue()
-    {
-        index = 0;
-        StartTypingCurrentLine();
-    }
-
     void StartTypingCurrentLine()
     {
-        CancelIdleAutoAdvance();
-        textComponent.text = string.Empty;
+        // Ensure the panel is active first
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
 
-        // Start voice for this line (if exists)
+        CancelIdleAutoAdvance();
+
+        if (typingCR != null) StopCoroutine(typingCR);
+        typingCR = StartCoroutine(StartTypingDeferred());
+    }
+
+    IEnumerator StartTypingDeferred()
+    {
+        // Let the Canvas/Mask/Layout rebuild this frame
+        yield return null;
+
+        // If you use masks/auto layout, force a rebuild
+        Canvas.ForceUpdateCanvases();
+
+        // Assign full line once; reveal with maxVisibleCharacters
+        string line = lines[index] ?? string.Empty;
+        textComponent.enableWordWrapping = false;                 // optional safety
+        textComponent.overflowMode = TextOverflowModes.Overflow;  // let panel clip, not TMP
+        textComponent.text = line;
+        textComponent.maxVisibleCharacters = 0;
+
+        // Build TMP geometry now that the object is active & canvas updated
+        textComponent.ForceMeshUpdate();
+
+        // Start voice (if any)
         PlayVoice(index);
 
+        // Now run the typewriter
         typingCR = StartCoroutine(TypeLine());
     }
 
+
     IEnumerator TypeLine()
     {
-        foreach (char c in lines[index])
+        // Give TMP one frame on the very first ever use (extra safe)
+        yield return null;
+
+        textComponent.ForceMeshUpdate();
+        int total = textComponent.textInfo.characterCount;
+
+        float speed = Mathf.Max(0.0001f, textSpeed);
+
+        if (useUnscaledTime || Time.timeScale == 0f) // <-- auto-detect paused state
         {
-            textComponent.text += c;
-            yield return new WaitForSeconds(textSpeed);
+            float t = 0f;
+            int visible = 0;
+            while (visible < total)
+            {
+                t += Time.unscaledDeltaTime;
+                while (t >= speed && visible < total)
+                {
+                    visible++;
+                    textComponent.maxVisibleCharacters = visible;
+                    t -= speed;
+                }
+                yield return null;
+            }
+        }
+        else
+        {
+            var wait = new WaitForSeconds(speed);
+            for (int visible = 1; visible <= total; visible++)
+            {
+                textComponent.maxVisibleCharacters = visible;
+                yield return wait;
+            }
         }
 
-        typingCR = null;           // finished typing
-        StartIdleAutoAdvance();    // now wait to auto-advance
+        typingCR = null;
+        StartIdleAutoAdvance();
+    }
+
+    void InstantReveal()
+    {
+        if (typingCR != null)
+        {
+            StopCoroutine(typingCR);
+            typingCR = null;
+        }
+        textComponent.maxVisibleCharacters = int.MaxValue;
     }
 
     void StartIdleAutoAdvance()
@@ -101,24 +162,34 @@ public class DialogueScript : MonoBehaviour
     IEnumerator AutoAdvanceAfterDelay()
     {
         // 1) Always wait at least 'autoNextDelay' after the text is fully visible
-        float t = 0f;
-        while (t < autoNextDelay)
+        if (useUnscaledTime)
         {
-            if (typingCR != null) yield break; // typing restarted (safety)
-            t += Time.unscaledDeltaTime;
-            yield return null;
+            float t = 0f; while (t < autoNextDelay) { if (typingCR != null) yield break; t += Time.unscaledDeltaTime; yield return null; }
+        }
+        else
+        {
+            float t = 0f; while (t < autoNextDelay) { if (typingCR != null) yield break; t += Time.deltaTime; yield return null; }
         }
 
         // 2) Optionally wait for voice to finish
         if (waitForVoiceToFinish && voiceSource != null && voiceSource.isPlaying)
         {
-            // Wait until the currently playing line's clip is done
             while (voiceSource.isPlaying) { yield return null; }
-            if (postVoicePause > 0f) yield return new WaitForSeconds(postVoicePause);
+            if (postVoicePause > 0f)
+            {
+                if (useUnscaledTime)
+                {
+                    float t2 = 0f; while (t2 < postVoicePause) { t2 += Time.unscaledDeltaTime; yield return null; }
+                }
+                else
+                {
+                    yield return new WaitForSeconds(postVoicePause);
+                }
+            }
         }
 
-        // 3) Only auto-advance if we're still on the same line and fully shown
-        if (typingCR == null && textComponent.text == lines[index])
+        // 3) Only auto-advance if we're still on same line and not mid-typing
+        if (typingCR == null)
         {
             NextLine();
         }
@@ -129,7 +200,7 @@ public class DialogueScript : MonoBehaviour
     {
         CancelIdleAutoAdvance();
 
-        if (index < lines.Length - 1)
+        if (lines != null && index < lines.Length - 1)
         {
             index++;
             StartTypingCurrentLine();
@@ -143,7 +214,6 @@ public class DialogueScript : MonoBehaviour
     }
 
     // --- Voice helpers ---
-
     void PlayVoice(int i)
     {
         if (voiceSource == null || voiceClips == null || i < 0 || i >= voiceClips.Length) return;
@@ -159,5 +229,49 @@ public class DialogueScript : MonoBehaviour
     {
         if (voiceSource != null && voiceSource.isPlaying)
             voiceSource.Stop();
+    }
+
+    // === Public entry point: play any sequence on demand ===
+    public void PlaySequence(DialogueSequence seq, AudioSource voiceSourceOpt = null)
+    {
+        if (seq == null)
+        {
+            Debug.LogWarning("[DialogueScript] PlaySequence called with null sequence.");
+            return;
+        }
+
+        if (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+        }
+
+        // Replace data from the asset
+        this.lines = seq.lines;
+
+        // If provided, wire voice clips and options
+        if (seq.voiceClips != null && seq.voiceClips.Length == seq.lines.Length)
+            this.voiceClips = seq.voiceClips;
+        else
+            this.voiceClips = null; // safe if you don't use voice for this sequence
+
+        this.waitForVoiceToFinish = seq.waitForVoiceToFinish;
+        this.postVoicePause = seq.postVoicePause;
+
+        if (voiceSourceOpt != null) this.voiceSource = voiceSourceOpt;
+
+        // Restart playback cleanly
+        StopAllCoroutines();
+        index = 0;
+
+        if (textComponent)
+        {
+            textComponent.text = string.Empty;
+            textComponent.maxVisibleCharacters = 0;
+        }
+
+        typingCR = null;
+        autoAdvanceCR = null;
+
+        StartTypingCurrentLine();
     }
 }
