@@ -764,6 +764,12 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   sleepingClip: {fileID: 0}
   blackScreen: {fileID: 0}
+  nextScene: 
+  ps: {fileID: 0}
+  firebins: {fileID: 0}
+  eerieClip: {fileID: 0}
+  yourFree: {fileID: 0}
+  thankYouText: {fileID: 0}
 --- !u!114 &141954286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5143,19 +5149,19 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815256399}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1cec35506f939e43b8ddf4f9d28f155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 60
-  sprintSpeed: 400
+  sprintSpeed: 120
   mouseSensitivity: 1.5
   maxLookX: 80
   minLookX: -100
   sprintKey: 304
   currentSpeed: 0
-  maxStamina: 10
+  maxStamina: 2
   stamina: 0
   staminaDrainRate: 0.75
   staminaRegenRate: 0.5
@@ -6138,6 +6144,12 @@ MonoBehaviour:
   audioSource: {fileID: 457839334}
   sleepingClip: {fileID: 8300000, guid: 513f05eba30071e4aaa385e6d1d01c0b, type: 3}
   blackScreen: {fileID: 1042573795}
+  nextScene: 
+  ps: {fileID: 0}
+  firebins: {fileID: 0}
+  eerieClip: {fileID: 0}
+  yourFree: {fileID: 0}
+  thankYouText: {fileID: 0}
 --- !u!4 &969343098 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8435234694331058940, guid: 065c7f20de1e3f248a333cbf87c40e64, type: 3}

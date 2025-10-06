@@ -1151,6 +1151,11 @@ MonoBehaviour:
   sleepingClip: {fileID: 0}
   blackScreen: {fileID: 0}
   nextScene: 
+  ps: {fileID: 0}
+  firebins: {fileID: 0}
+  eerieClip: {fileID: 0}
+  yourFree: {fileID: 0}
+  thankYouText: {fileID: 0}
 --- !u!114 &141954286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5354,13 +5359,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 60
-  sprintSpeed: 400
+  sprintSpeed: 120
   mouseSensitivity: 1.5
   maxLookX: 80
   minLookX: -100
   sprintKey: 304
   currentSpeed: 0
-  maxStamina: 10
+  maxStamina: 2
   stamina: 0
   staminaDrainRate: 0.75
   staminaRegenRate: 0.5
@@ -6559,6 +6564,11 @@ MonoBehaviour:
   sleepingClip: {fileID: 8300000, guid: 74894cecc689a46408cdf724d8cc4f41, type: 3}
   blackScreen: {fileID: 0}
   nextScene: House
+  ps: {fileID: 0}
+  firebins: {fileID: 0}
+  eerieClip: {fileID: 0}
+  yourFree: {fileID: 0}
+  thankYouText: {fileID: 0}
 --- !u!4 &969343098 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8435234694331058940, guid: 065c7f20de1e3f248a333cbf87c40e64, type: 3}
