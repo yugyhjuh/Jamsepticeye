@@ -272,7 +272,6 @@ GameObject:
   - component: {fileID: 194652381}
   - component: {fileID: 194652380}
   - component: {fileID: 194652383}
-  - component: {fileID: 194652384}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -366,25 +365,6 @@ MonoBehaviour:
   _PostProcessShader: {fileID: 4800000, guid: 56d52fd5b7c6911468179e5a7359ce0e, type: 3}
   _PostProcessShaderAccurate: {fileID: 4800000, guid: 2ebed186567d3c244a87538744a62920, type: 3}
   _InterlacingShader: {fileID: 4800000, guid: 03ebd34214b41ef459d7ee6753b062be, type: 3}
---- !u!114 &194652384
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194652379}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70f75c61020fcb645bcf4acf2a0b478e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lowResWidth: 320
-  lowResHeight: 240
-  outputWidth: 640
-  outputHeight: 480
-  filterMode: 0
-  cam: {fileID: 194652381}
-  lowResRT: {fileID: 0}
 --- !u!1 &207805031
 GameObject:
   m_ObjectHideFlags: 0
@@ -528,12 +508,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a4c69f7a9d3ea43907b5765229dc85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _TextureWarpingFactor: 0
+  _TextureWarpingFactor: 0.543
   _TextureWarpingMode: 0
   _VertexGridResolution: 50
   _UseRetroVertexLighting: 1
-  _RetroLightingNormalFactor: 0
-  _RetroLightFalloffStart: 0
+  _RetroLightingNormalFactor: 1
+  _RetroLightFalloffStart: 0.9999
   _FlatShadingMode: 0
   _TriangleSortMode: 0
   _DepthDebugView: 0
