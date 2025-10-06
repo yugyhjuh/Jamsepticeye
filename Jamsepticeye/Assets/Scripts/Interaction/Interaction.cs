@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEngine.ParticleSystem;
 
 public class Interaction : MonoBehaviour
 {
@@ -12,10 +13,17 @@ public class Interaction : MonoBehaviour
     public AudioClip sleepingClip;
 
     public GameObject blackScreen;
+
+    public string nextScene;
+
+    public ParticleSystem ps;
+    public GameObject firebins;
     // Start is called before the first frame update
     void Start()
     {
         player = transform.root.GetChild(0);
+        if (ps != null)
+            ps.Stop();
     }
 
     // Update is called once per frame
@@ -52,6 +60,16 @@ public class Interaction : MonoBehaviour
         {
             StartCoroutine(DieFirst()); // triggers scene change
         }
+
+        if (hit.collider.TryGetComponent<SecondDeath>(out SecondDeath secondDeath))
+        {
+            StartCoroutine(DieSecond()); // triggers scene change
+        }
+
+        if (hit.collider.gameObject.name == "FireBin")
+        {
+            StartCoroutine(StartFire());
+        }
     }
 
     IEnumerator Teleport(Lift lift)
@@ -79,7 +97,7 @@ public class Interaction : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        SceneManager.LoadScene("House");
+        SceneManager.LoadScene(nextScene);
 
     }
 
@@ -98,5 +116,37 @@ public class Interaction : MonoBehaviour
 
         // Change the scene
         SceneManager.LoadScene("DiedOnce");
+    }
+
+    private IEnumerator DieSecond()
+    {
+
+        if (audioSource != null && sleepingClip != null && blackScreen != null)
+        {
+            blackScreen.SetActive(true);
+            audioSource.clip = sleepingClip;
+            audioSource.Play();
+
+            // Wait until the clip finishes
+            yield return new WaitForSeconds(audioSource.clip.length);
+        }
+
+        // Change the scene
+        SceneManager.LoadScene("DiedTwice");
+    }
+
+    IEnumerator StartFire()
+    {
+        Debug.Log("Fire");
+        ps.Play();
+
+        // Wait for 7 seconds
+        yield return new WaitForSeconds(7f);
+
+        // Stop the particle system
+        ps.Stop();
+
+        // Activate the object
+        firebins.SetActive(true);
     }
 }
