@@ -7,6 +7,6 @@ public class resolution : MonoBehaviour
         DontDestroyOnLoad(gameObject); // stays alive between scenes
 
         // Set your desired resolution
-        Screen.SetResolution(640, 480, false); // false = windowed mode
+        Screen.SetResolution(640, 480, true); // false = windowed mode
     }
 }
