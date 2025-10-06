@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 708f62adf4c7e0e428cdaba3f2da5921
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Omgelliot.unity
     guid: b2648b5109177c64f9ac1daaa3d4df08
   - enabled: 1
@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/House.unity
     guid: 2280bd48d9b2c214bb9864c63851ce34
+  - enabled: 1
+    path: Assets/Scenes/HouseFirstDeath.unity
+    guid: d6b9c8d428c72594388f3b2a1896e94a
+  - enabled: 1
+    path: Assets/Scenes/DiedOnce.unity
+    guid: 5eb69adc09be4bd46bd847309e9d0ed4
   m_configObjects: {}

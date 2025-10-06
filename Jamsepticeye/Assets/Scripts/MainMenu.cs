@@ -7,7 +7,7 @@ public class MainMenu : MonoBehaviour
 
     public void PlayScene()
     {
-        SceneManager.LoadScene("Omgelliot");
+        SceneManager.LoadScene("Main");
 
     }
 

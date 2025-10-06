@@ -31,6 +31,8 @@ public class CameraShake : MonoBehaviour
 
     private void Awake()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         _startPos = _camera.localPosition;
     }
 

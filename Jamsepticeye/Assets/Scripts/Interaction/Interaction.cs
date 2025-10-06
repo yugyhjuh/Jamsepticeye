@@ -10,6 +10,8 @@ public class Interaction : MonoBehaviour
     public AudioSource audioSource;
 
     public AudioClip sleepingClip;
+
+    public GameObject blackScreen;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +22,7 @@ public class Interaction : MonoBehaviour
     void Update()
     {
         RaycastHit hit;
-        if(Physics.Raycast(transform.position, transform.forward, out hit))
+        if (Physics.Raycast(transform.position, transform.forward, out hit))
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
@@ -39,6 +41,16 @@ public class Interaction : MonoBehaviour
         if (hit.collider.TryGetComponent<Door>(out Door door))
         {
             StartCoroutine(OpenDoor(door));
+        }
+
+        if (hit.collider.TryGetComponent<Bed>(out Bed bed))
+        {
+            bed.Interact(); // triggers scene change
+        }
+
+        if (hit.collider.TryGetComponent<FirstDeath>(out FirstDeath firstDeath))
+        {
+            StartCoroutine(DieFirst()); // triggers scene change
         }
     }
 
@@ -64,10 +76,27 @@ public class Interaction : MonoBehaviour
 
     IEnumerator OpenDoor(Door door)
     {
-        
+
         yield return new WaitForSeconds(0.1f);
 
         SceneManager.LoadScene("House");
 
+    }
+
+    private IEnumerator DieFirst()
+    {
+
+        if (audioSource != null && sleepingClip != null && blackScreen != null)
+        {
+            blackScreen.SetActive(true);
+            audioSource.clip = sleepingClip;
+            audioSource.Play();
+
+            // Wait until the clip finishes
+            yield return new WaitForSeconds(audioSource.clip.length);
+        }
+
+        // Change the scene
+        SceneManager.LoadScene("DiedOnce");
     }
 }

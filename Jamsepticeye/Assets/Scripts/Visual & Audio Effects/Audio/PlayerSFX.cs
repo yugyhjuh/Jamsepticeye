@@ -63,7 +63,7 @@ public class PlayerSFX : MonoBehaviour
         // Calculate movement direction
         Vector3 move = transform.right * x + transform.forward * z;
 
-        Debug.Log(characterMovement.currentSpeed);
+        //Debug.Log(characterMovement.currentSpeed);
         Footsteps(move * characterMovement.currentSpeed * Time.deltaTime);
 
         Reverb();
