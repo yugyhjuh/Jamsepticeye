@@ -25673,13 +25673,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 60
-  sprintSpeed: 400
+  sprintSpeed: 120
   mouseSensitivity: 1.5
   maxLookX: 80
   minLookX: -100
   sprintKey: 304
   currentSpeed: 0
-  maxStamina: 10
+  maxStamina: 2
   stamina: 0
   staminaDrainRate: 0.75
   staminaRegenRate: 0.5
