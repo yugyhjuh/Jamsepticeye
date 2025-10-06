@@ -45,6 +45,11 @@ public class Interaction : MonoBehaviour
         {
             bed.Interact(); // triggers scene change
         }
+
+        if (hit.collider.TryGetComponent<FirstDeath>(out FirstDeath firstDeath))
+        {
+            firstDeath.Interact(); // triggers scene change
+        }
     }
 
     IEnumerator Teleport(Lift lift)
