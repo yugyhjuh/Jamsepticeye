@@ -22,5 +22,14 @@ EditorBuildSettings:
     guid: d6b9c8d428c72594388f3b2a1896e94a
   - enabled: 1
     path: Assets/Scenes/DiedOnce.unity
-    guid: 5eb69adc09be4bd46bd847309e9d0ed4
+    guid: e650c0cadfc675441afea2b8f5e2611b
+  - enabled: 1
+    path: Assets/Scenes/HouseSecondDeath.unity
+    guid: 55cd37fd66b94dc4b89b8a5e504eb514
+  - enabled: 1
+    path: Assets/Scenes/DistortionHouse.unity
+    guid: 1bb094221cc4baf4d8ae08175238dba5
+  - enabled: 1
+    path: Assets/Scenes/DiedTwice.unity
+    guid: c86b59fa93659904ab52a039e178dd33
   m_configObjects: {}

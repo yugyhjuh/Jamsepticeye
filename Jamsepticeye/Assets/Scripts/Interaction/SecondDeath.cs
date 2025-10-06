@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class FirstDeath : MonoBehaviour
+public class SecondDeath : MonoBehaviour
 {
     // Start is called before the first frame update
     public void Interact()
@@ -12,9 +12,9 @@ public class FirstDeath : MonoBehaviour
                 hasBeenUsed = true;*/
 
         // Optional: play sound, animation, fade, etc.
-        Debug.Log("Bed used! Loading next scene...");
+        //Debug.Log("Bed used! Loading next scene...");
 
         // Load the next scene
-        //SceneManager.LoadScene("DiedOnce");
+        //SceneManager.LoadScene("DiedTwice");
     }
 }
