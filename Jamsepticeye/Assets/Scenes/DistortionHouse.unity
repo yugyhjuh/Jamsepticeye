@@ -838,6 +838,8 @@ MonoBehaviour:
   sleepingClip: {fileID: 0}
   blackScreen: {fileID: 0}
   nextScene: 
+  ps: {fileID: 0}
+  firebins: {fileID: 0}
 --- !u!114 &141954286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3144,6 +3146,7 @@ MonoBehaviour:
   clips:
   - {fileID: 8300000, guid: af3ba0e8022210244a44d9310d5ba3e9, type: 3}
   - {fileID: 8300000, guid: d173a48f765093b47ab50936e9cabea8, type: 3}
+  - {fileID: 8300000, guid: f2e07db74cc013349a258ff014e3081d, type: 3}
 --- !u!1001 &467169591
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6312,6 +6315,8 @@ MonoBehaviour:
   sleepingClip: {fileID: 8300000, guid: 513f05eba30071e4aaa385e6d1d01c0b, type: 3}
   blackScreen: {fileID: 33145383}
   nextScene: 
+  ps: {fileID: 0}
+  firebins: {fileID: 0}
 --- !u!4 &969343098 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8435234694331058940, guid: 065c7f20de1e3f248a333cbf87c40e64, type: 3}
